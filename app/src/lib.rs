@@ -35,22 +35,31 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(0);
-    let on_clik = move |_| set_count.update(|count| *count += 1);
-
     let server_act = create_action(|_| get_ipconfig());
+    let values = create_memo(move |_| {
+        let v = server_act.value().get();
+        v.map(|rv| {
+            rv.map(|v| {
+                v.iter()
+                    .map(|s| view! {<span><br/><code>{s}</code></span> })
+                    .collect_view()
+            })
+        })
+    });
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_clik>"Click Me: " {count}</button>
+        <h1>"ipconfig"</h1>
         <button on:click=move |_| server_act.dispatch(())>"get_ipconfig: "</button>
-        <span>{server_act.value()}</span>
+        <div>
+            {values}
+        </div>
     }
 }
 
 #[server]
-pub async fn get_ipconfig() -> Result<String, ServerFnError> {
+pub async fn get_ipconfig() -> Result<Vec<String>, ServerFnError> {
     let out = Command::new("ipconfig").output().unwrap().stdout;
-    Ok(String::from_utf8(out).unwrap())
+    let out = String::from_utf8(out).unwrap();
+    let out = out.split('\n').map(|s| s.to_owned()).collect::<Vec<_>>();
+    Ok(out)
 }
