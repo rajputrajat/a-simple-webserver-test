@@ -1,8 +1,9 @@
-use std::process::Command;
-
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+use rig_info::RigInfoClient;
+use std::process::Command;
+use tarpc::{client, context, tokio_serde::formats::Json};
 
 pub mod error_template;
 
@@ -62,4 +63,12 @@ pub async fn get_ipconfig() -> Result<Vec<String>, ServerFnError> {
     let out = String::from_utf8(out).unwrap();
     let out = out.split('\n').map(|s| s.to_owned()).collect::<Vec<_>>();
     Ok(out)
+}
+
+#[server]
+pub async fn get_ifconfig(rig_ip: String) -> Result<String, ServerFnError> {
+    let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
+    transport.config_mut().max_frame_length(usize::MAX);
+    let client = RigInfoClient::new(client::Config::default(), transport.await.unwrap()).spawn();
+    Ok(client.ip(context::current()).await.unwrap())
 }

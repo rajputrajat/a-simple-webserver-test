@@ -2,6 +2,7 @@
 
 use anyhow::Result;
 use futures::{future, StreamExt};
+use rig_info::RigInfo;
 use std::{env, net::Ipv4Addr};
 use tarpc::{
     context::Context,
@@ -9,11 +10,6 @@ use tarpc::{
     tokio_serde::formats::Json,
 };
 use tokio::process::Command;
-
-#[tarpc::service]
-pub trait RigInfo {
-    async fn ip() -> String;
-}
 
 #[derive(Clone)]
 struct RigServer;
