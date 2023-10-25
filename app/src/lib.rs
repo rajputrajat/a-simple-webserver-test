@@ -37,6 +37,7 @@ pub fn App() -> impl IntoView {
 #[component]
 fn HomePage() -> impl IntoView {
     let server_act = create_action(|_| get_ipconfig());
+    //let server_rig_ip = create_action(|_| get_ifconfig());
     let values = create_memo(move |_| {
         let v = server_act.value().get();
         v.map(|rv| {
@@ -50,6 +51,7 @@ fn HomePage() -> impl IntoView {
 
     view! {
         <h1>"ipconfig"</h1>
+        <button on:click=move |_| server_act.dispatch(())>"get_ipconfig: "</button>
         <button on:click=move |_| server_act.dispatch(())>"get_ipconfig: "</button>
         <div>
             {values}
