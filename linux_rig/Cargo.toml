@@ -1,0 +1,10 @@
+[package]
+name = "linux_rig"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tarpc = { version = "*", features = ["full"] }
+tokio = { version = "*", features = ["macros", "net", "rt-multi-thread"] }
+futures = "*"
+anyhow = "*"

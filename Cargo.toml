@@ -1,5 +1,5 @@
 [workspace]
-members = ["app", "frontend", "server"]
+members = ["app", "frontend", "server", "linux_rig"]
 resolver = "2"
 
 # need to be applied only to wasm build
