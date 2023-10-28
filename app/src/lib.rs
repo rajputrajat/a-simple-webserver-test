@@ -1,3 +1,4 @@
+use cfg_if::cfg_if;
 use leptos::{html::Input, *};
 use leptos_meta::*;
 use leptos_router::*;
@@ -76,23 +77,30 @@ pub async fn get_ipconfig() -> Result<Vec<String>, ServerFnError> {
     Ok(out)
 }
 
-#[cfg(target_family = "wasm")]
 #[server]
 pub async fn get_ifconfig(rig_ip: String) -> Result<String, ServerFnError> {
-    //println!("from wasm");
-    Ok("from wasm".to_owned())
-    // use rig_info::RigInfoClient;
-    // use tarpc::{client, context, tokio_serde::formats::Json};
-    // let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
-    // transport.config_mut().max_frame_length(usize::MAX);
-    // let client = RigInfoClient::new(client::Config::default(), transport.await.unwrap()).spawn();
-    // Ok(client.ip(context::current()).await.unwrap())
-}
+    cfg_if! {
+        if #[cfg(target_family = "wasm")] {
+            //println!("from wasm");
+            Ok("from wasm".to_owned())
+        }else {
+            use rig_info::RigInfoClient;
+            use tarpc::{client, context, tokio_serde::formats::Json};
 
-#[cfg(not(target_family = "wasm"))]
-#[server]
-pub async fn get_ifconfig(_rig_ip: String) -> Result<String, ServerFnError> {
-    println!("from wasm");
-    // todo!()
-    Ok("from non wasm".to_owned())
+            println!("{rig_ip}");
+            let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
+            transport.config_mut().max_frame_length(usize::MAX);
+            match transport.await {
+                Ok(trnsprt) => {
+                    let client = RigInfoClient::new(client::Config::default(), trnsprt).spawn();
+                    match client.ip(context::current()).await {
+                        Ok(ip) => return Ok("ip".to_owned()),
+                        Err(_e) => {}
+                    }
+                }
+                Err(_e) => {}
+            }
+        Ok("failed".to_owned())
+        }
+    }
 }
