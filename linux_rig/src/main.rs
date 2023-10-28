@@ -17,7 +17,7 @@ struct RigServer;
 #[tarpc::server]
 impl RigInfo for RigServer {
     async fn ip(self, _: Context) -> String {
-        let out = Command::new("ifconfig").output().await.unwrap().stdout;
+        let out = Command::new("ls").output().await.unwrap().stdout;
         String::from_utf8(out).unwrap()
     }
 }
