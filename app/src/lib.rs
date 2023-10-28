@@ -88,13 +88,13 @@ pub async fn get_ifconfig(rig_ip: String) -> Result<String, ServerFnError> {
             use tarpc::{client, context, tokio_serde::formats::Json};
 
             println!("{rig_ip}");
-            let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
+            let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 3001), Json::default);
             transport.config_mut().max_frame_length(usize::MAX);
             match transport.await {
                 Ok(trnsprt) => {
                     let client = RigInfoClient::new(client::Config::default(), trnsprt).spawn();
                     match client.ip(context::current()).await {
-                        Ok(ip) => return Ok("ip".to_owned()),
+                        Ok(ip) => return Ok(ip),
                         Err(_e) => {}
                     }
                 }
