@@ -8,8 +8,6 @@ edition = "2021"
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 web-sys = "0.3"
-# tarpc = { version = "0.33", features = ["full"] }
-# linux_rig = { path = "../linux_rig" }
 
 leptos.workspace = true
 leptos_meta.workspace = true
@@ -23,3 +21,7 @@ thiserror.workspace = true
 default = []
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+tarpc = { version = "0.33", features = ["full"]}
+linux_rig = { path = "../linux_rig" }
