@@ -7,8 +7,9 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
-tarpc = { version = "*", features = ["full"] }
-linux_rig = { path = "../linux_rig" }
+web-sys = "0.3"
+# tarpc = { version = "0.33", features = ["full"] }
+# linux_rig = { path = "../linux_rig" }
 
 leptos.workspace = true
 leptos_meta.workspace = true

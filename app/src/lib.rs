@@ -1,9 +1,9 @@
 use leptos::{html::Input, *};
 use leptos_meta::*;
 use leptos_router::*;
-use rig_info::RigInfoClient;
+// use rig_info::RigInfoClient;
 use std::process::Command;
-use tarpc::{client, context, tokio_serde::formats::Json};
+//use tarpc::{client, context, tokio_serde::formats::Json};
 use web_sys::SubmitEvent;
 
 pub mod error_template;
@@ -50,24 +50,24 @@ fn HomePage() -> impl IntoView {
         })
     });
 
-    let (signal_linux_ip, set_signal_linux_ip) = create_signal("set ip".to_owned());
-    let input_element: NodeRef<Input> = create_node_ref();
-    let on_submit_ip = move |ev: SubmitEvent| {
-        ev.prevent_default();
-        let value = input_element().expect("<input> to exist").value();
-        set_signal_linux_ip(value);
-    };
+    // let (signal_linux_ip, set_signal_linux_ip) = create_signal("set ip".to_owned());
+    // let input_element: NodeRef<Input> = create_node_ref();
+    // let on_submit_ip = move |ev: SubmitEvent| {
+    //     ev.prevent_default();
+    //     let value = input_element().expect("<input> to exist").value();
+    //     set_signal_linux_ip(value);
+    // };
 
     view! {
         <h1>"ipconfig"</h1>
         <button on:click=move |_| server_act.dispatch(())>"get_ipconfig: "</button>
-        <form on:submit=on_submit_ip>
-            <input type="text" value=signal_linux_ip node_ref=input_element />
-            <input type="submit" value="Submit"/>
-        </form>
+        // <form on:submit=on_submit_ip>
+        //     <input type="text" value=signal_linux_ip node_ref=input_element />
+        //     <input type="submit" value="Submit"/>
+        // </form>
         <div>
             {values}
-            <p>"ipinfo of the rig is: " {signal_linux_ip}</p>
+            // <p>"ipinfo of the rig is: " {signal_linux_ip}</p>
         </div>
     }
 }
@@ -80,10 +80,10 @@ pub async fn get_ipconfig() -> Result<Vec<String>, ServerFnError> {
     Ok(out)
 }
 
-#[server]
-pub async fn get_ifconfig(rig_ip: String) -> Result<String, ServerFnError> {
-    let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
-    transport.config_mut().max_frame_length(usize::MAX);
-    let client = RigInfoClient::new(client::Config::default(), transport.await.unwrap()).spawn();
-    Ok(client.ip(context::current()).await.unwrap())
-}
+// #[server]
+// pub async fn get_ifconfig(rig_ip: String) -> Result<String, ServerFnError> {
+//     let mut transport = tarpc::serde_transport::tcp::connect((rig_ip, 8001), Json::default);
+//     transport.config_mut().max_frame_length(usize::MAX);
+//     let client = RigInfoClient::new(client::Config::default(), transport.await.unwrap()).spawn();
+//     Ok(client.ip(context::current()).await.unwrap())
+// }
