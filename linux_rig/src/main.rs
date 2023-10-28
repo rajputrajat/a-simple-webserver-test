@@ -17,7 +17,7 @@ struct RigServer;
 #[tarpc::server]
 impl RigInfo for RigServer {
     async fn ip(self, _: Context) -> String {
-        let out = Command::new("ipconfig").output().await.unwrap().stdout;
+        let out = Command::new("ifconfig").output().await.unwrap().stdout;
         String::from_utf8(out).unwrap()
     }
 }
@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
     // let args = env::args().skip(1).collect::<Vec<_>>();
     // let (ip, port) = (&args[0], &args[1]);
     //let ip = Ipv4Addr::parse_ascii(ip.as_bytes()).unwrap();
-    let ip: Ipv4Addr = "192.168.1.3".parse().unwrap();
+    let ip: Ipv4Addr = "172.26.8.90".parse().unwrap();
     let mut listner =
         //tarpc::serde_transport::tcp::listen((ip, port.parse::<u16>()?), Json::default).await?;
         tarpc::serde_transport::tcp::listen((ip, 3001), Json::default).await?;
